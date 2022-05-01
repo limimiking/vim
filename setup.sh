@@ -1,9 +1,20 @@
 #!/bin/bash
-echo "安装将花费一定时间，请耐心等待直到安装完成^_^"
+echo "This script will install and configure vim and zsh automatic."
+echo "The time this takes is related to the network conditions, please wait patiently."
+if [[ `whoami` == "root" ]];then
+    echo -e "\033[31mYou are  running this script with Root\033[0m"
+    echo -e "\033[31mGenerally, we do not recommend using root for programming or directly controlling your Linux OS, especially when you are a beginner \033[0m"
+    echo -e "\033[31mSo, There is no necessary for you to configure with root."
+    read -p "Do you really want to do this?[N/y]" choice
+    if [[ ${choice} != y ]];then
+    	echo "Bye."
+    	exit 1
+    fi
+fi
 if which apt-get >/dev/null; then
-	sudo apt-get install -y vim vim-gnome ctags xclip astyle python-setuptools python-dev git
+	sudo apt-get install -y vim vim-gnome ctags xclip astyle python-setuptools python-dev git wget
 elif which yum >/dev/null; then
-	sudo yum install -y gcc vim git ctags xclip astyle python-setuptools python-devel	
+	sudo yum install -y gcc vim git ctags xclip astyle python-setuptools python-devel wget	
 fi
 
 ##Add HomeBrew support on  Mac OS
@@ -12,18 +23,21 @@ if which brew >/dev/null;then
     brew install vim ctags git astyle
 fi
 
-sudo easy_install -ZU autopep8 
+sudo pip install autopep8 
 sudo ln -s /usr/bin/ctags /usr/local/bin/ctags
+rm -rf ~/vim* 2>&1 >/dev/null
+rm -rf ~/.vim* 2>&1 >/dev/null
 mv -f ~/vim ~/vim_old
-cd ~/ && git clone https://github.com/ma6174/vim.git
-mv -f ~/.vim ~/.vim_old
-mv -f ~/vim ~/.vim
-mv -f ~/.vimrc ~/.vimrc_old
-mv -f ~/.vim/.vimrc ~/
-git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
-echo "ma6174正在努力为您安装bundle程序" > ma6174
-echo "安装完毕将自动退出" >> ma6174
-echo "请耐心等待" >> ma6174
-vim ma6174 -c "BundleInstall" -c "q" -c "q"
-rm ma6174
+cd ~/ && git clone https://github.com/limimiking/vim.git
+mv -f ~/.vim ~/.vim_old 2>&1 >/dev/null
+mv -f ~/vim ~/.vim 2>&1 >/dev/null
+mv -f ~/.vimrc ~/.vimrc_old 2>&1 >/dev/null
+mv -f ~/.vim/.vimrc ~/ 
+git clone https://github.com/limimiking/Vundle.vim.git ~/.vim/bundle/vundle
+echo "Installing plugins" > BundleInstall
+echo "command-t installation will cost a relatively long time" >> BundleInstall
+echo "don't quit this interface, or setup will fail" >> BundleInstall
+vim BundleInstall -c "BundleInstall" -c "q" -c "q"
+rm BundleInstall
 echo "安装完成"
+
